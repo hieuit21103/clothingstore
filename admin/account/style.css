@@ -1,0 +1,93 @@
+body{
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+.row-mg{
+    padding-bottom: 30px;
+}
+
+.avatar{
+    border: white;
+    border-radius: 50%;
+    width: 224px;
+    height: 224px;
+}
+
+.avatar-container .btn{
+    background-color: #212529;
+    margin-left: 20px;
+    color: #ffffff;
+    font-size: 20px;
+    border: 1px solid #ffffff;
+}
+
+.avatar-container .btn:hover{
+    background-color: #343a40;
+}
+
+a {
+    color: #007bff !important;
+    text-decoration: none;
+}
+
+a:hover {
+    cursor:pointer;
+}
+
+.label-title{
+    color: #a9a9a9;
+}
+
+hr{
+    color: #a9a9a9 !important;
+    margin-top: 20px !important;
+}
+
+#nameInput{
+    display: none;
+    margin-right: auto;
+    width: 70%;
+    background-color: #212529;
+    color: #ffffff;
+}
+
+#dobInput{
+    display: none;
+    margin-right: auto;
+    width: 70%;
+    background-color: #212529;
+    color: #ffffff;
+}
+
+#addressInput{
+    display: none;
+    margin-right: auto;
+    width: 70%;
+    background-color: #212529;
+    color: #ffffff;
+}
+
+#emailInput{
+    display: none;
+    margin-right: auto;
+    width: 70%;
+    background-color: #212529;
+    color: #ffffff;
+}
+
+#telInput{
+    display: none;
+    margin-right: auto;
+    width: 70%;
+    background-color: #212529;
+    color: #ffffff;
+}
+
+#pwdInput{
+    display: none;
+    margin-right: auto;
+    width: 70%;
+    background-color: #212529;
+    color: #ffffff;
+}

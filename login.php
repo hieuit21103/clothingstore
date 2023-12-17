@@ -31,6 +31,7 @@ session_start();
                     if($stmt->rowCount() > 0) {
                         $result = $stmt->fetch(PDO::FETCH_ASSOC);
                         $_SESSION['username'] = $result['username'];
+                        $_SESSION['user_id'] = $result['id'];
                         $_SESSION['role'] = $result['role'];
                         header("location: index.php");
                         exit();
@@ -108,6 +109,7 @@ session_start();
                                             <input name="submit" type="submit" value="Login" class="btn btn-dark btn-lg btn-block">
 <!--                                           < button class="btn btn-dark btn-lg btn-block" type="button">Login</button>-->
                                         </div>
+                                        <a href="forgot_password.php" style="color: #393f81">Forgot Password? Click here</a>
                                     </form>
                                 </div>
                             </div>

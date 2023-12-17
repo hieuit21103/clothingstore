@@ -5,7 +5,7 @@ if(isset($_GET['search'])) {
     $ordersPerPage = 10;
     $page = $_GET['page'] ?? 1;
     $start = ($page - 1) * $ordersPerPage;
-    $sql = "SELECT *,orders.id as oid,products.price as pprice,orderstatus.name as oname FROM orders INNER JOIN products ON orders.product_id = products.id INNER JOIN orderstatus on orders.status = orderstatus.id WHERE orders.id LIKE ? LIMIT ?,?";
+    $sql = "SELECT *,orders.id as oid,orderstatus.name as oname FROM orders INNER JOIN orderstatus on orders.status = orderstatus.id WHERE orders.id LIKE ? LIMIT ?,?";
     $connection = new mysqli($server, $user, $pwd, $database);
     $stmt = $connection->prepare($sql);
     $stmt->bind_param('iii',$search, $start, $ordersPerPage);
@@ -20,7 +20,7 @@ if(isset($_GET['search'])) {
     $page = $_GET['page'] ?? 1;
     $start = ($page - 1) * $ordersPerPage;
 
-    $sql = "SELECT *,orders.id as oid,products.price as pprice,orderstatus.name as oname FROM orders INNER JOIN products ON orders.product_id = products.id INNER JOIN orderstatus on orders.status = orderstatus.id LIMIT ?,?";
+    $sql = "SELECT *,orders.id as oid,orderstatus.name as oname FROM orders INNER JOIN orderstatus on orders.status = orderstatus.id LIMIT ?,?";
     $connection = new mysqli($server, $user, $pwd, $database);
     $stmt = $connection->prepare($sql);
     $stmt->bind_param('ii', $start, $ordersPerPage);
@@ -37,10 +37,9 @@ $html = '<table class="table" style="color: #ffffff">
                 <tr>
                     <th>ID</th>
                     <th>User ID</th>
-                    <th>Date</th>
+                    <th>Order Date</th>
+                    <th>Done Date</th>
                     <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Unit Price</th>
                     <th>Total</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -52,9 +51,8 @@ foreach ($orders as $order) {
     $html .= '<td>' . $order['oid'] . '</td>';
     $html .= '<td>' . $order['cus_id'] . '</td>';
     $html .= '<td>' . $order['order_date'] . '</td>';
-    $html .= '<td>' . $order['product_id'] . '</td>';
-    $html .= '<td>' . $order['quantity'] . '</td>';
-    $html .= '<td>' . $order['pprice'] . '</td>';
+    $html .= '<td>' . $order['done_date'] . '</td>';
+    $html .= '<td>' . $order['product'] . '</td>';
     $html .= '<td>' . $order['total'] . '</td>';
     $html .= '<td>' . $order['oname'] . '</td>';
     switch ($order['status']){

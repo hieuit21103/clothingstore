@@ -24,17 +24,27 @@ if(isset($_SESSION['username'])){
                     $stmt->bind_param('i',$_GET['id']);
                     $stmt->execute();
                     $stmt->close();
-                    $sql = "SELECT product_id,quantity,stock_quantity FROM orders INNER JOIN products on products.id = orders.product_id WHERE orders.id=?";
+                    $sql = "SELECT product FROM orders WHERE orders.id=?";
                     $stmt = $conn->prepare($sql);
                     $stmt->bind_param('i',$_GET['id']);
                     $stmt->execute();
                     $result = mysqli_fetch_assoc($stmt->get_result());
-                    $product_id = $result['product_id'];
-                    $quantity = $result['stock_quantity'] - $result['quantity'];
                     $stmt->close();
-                    $stmt = $conn->prepare("UPDATE products SET stock_quantity=? WHERE id =?");
-                    $stmt->bind_param('ii',$quantity,$product_id);
-                    $stmt->execute();
+                    $products = json_decode($result['product'],true);
+                    foreach($products as $product) {
+                        $stmt = $conn->prepare('SELECT * FROM PRODUCTS WHERE ID=?');
+                        $stmt->bind_param('i',  $product['product_id']);
+                        $stmt->execute();
+                        $res = mysqli_fetch_assoc($stmt->get_result());
+                        $quantity = $res['stock_quantity'] - $product['quantity'];
+                        $stmt->close();
+                        $stmt = $conn->prepare("UPDATE products SET stock_quantity=? WHERE id =?");
+                        $stmt->bind_param('ii', $quantity, $product['product_id']);
+                        $stmt->execute();
+                        $stmt->close();
+                        var_dump($product['product_id']);
+                        var_dump($quantity);
+                    }
                     break;
             }
         }

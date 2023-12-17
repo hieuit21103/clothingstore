@@ -1,5 +1,8 @@
 <?php
     session_start();
+    include "connect.php";
+    $conn = new PDO("mysql:host=$server;dbname=$database", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,7 +19,7 @@
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
@@ -48,7 +51,7 @@
 <!--                        </input>-->
 <!--                    </div>-->
 <!--                </form>-->
-                <form action="search_product.php"  method="post">
+                <form method="post" action="search_product.php">
                      <div class="input-group">
                         <input type="text" class="form-control" placeholder="Search for products" name="search_query">
                         <div class="input-group-append">
@@ -60,16 +63,16 @@
                 </form>
 
             </div>
-<!--            <div class="col-lg-3 col-6 text-right">-->
+            <div class="col-lg-3 col-6 text-right">
 <!--                <a href="" class="btn border">-->
 <!--                    <i class="fas fa-heart text-primary"></i>-->
 <!--                    <span class="badge">0</span>-->
 <!--                </a>-->
-<!--                <a href="cart.php" class="btn border">-->
-<!--                    <i class="fas fa-shopping-cart text-primary"></i>-->
-<!--                    <span class="badge">0</span>-->
-<!--                </a>-->
-<!--            </div>-->
+                <a href="cart.php" class="btn border">
+                    <i class="fas fa-shopping-cart text-primary"></i>
+<!--                    <span class="badge" id="count_quantity_cart">0</span>-->
+                </a>
+            </div>
         </div>
     </div>
     <!-- Topbar End -->
@@ -115,15 +118,24 @@
                             <a href="contact.php" class="nav-item nav-link">Contact</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
-                            <?php
-                                if(isset($_SESSION['username'])) {
-                                   echo '<span class = "nav-item nav-link">Xin chào '.$_SESSION['username'].' </span>';
-                                   echo '<a href="./logout.php" class="nav-item nav-link">Logout</a>';
-                                } else {
-                                    echo '<a href="./login.php" class="nav-item nav-link">Login</a>';
-                                    echo '<a href="./register.php" class="nav-item nav-link">Register</a>';
-                                }
-                            ?>
+                                <div class="nav-item dropdown">
+                                    <a href="#" class="nav-link" data-toggle="dropdown">
+                                        <?php
+                                        if(isset($_SESSION['username'])) {
+                                        echo 'Hello, ' . $_SESSION['username'];
+                                        ?>
+                                    </a>
+                                    <div class="dropdown-menu position-absolute bg-secondary border-0 rounded-0 w-150 m-0">
+                                        <a href="change_password.php" class="dropdown-item">Change Password</a>
+                                    </div>
+                                </div>
+                                <?php
+                                        echo '<a href="./logout.php" class="nav-item nav-link">Logout</a>';
+                                    } else {
+                                        echo '<a href="./login.php" class="nav-item nav-link">Login</a>';
+                                        echo '<a href="./register.php" class="nav-item nav-link">Register</a>';
+                                    }
+                                ?>
                         </div>
                     </div>
                 </nav>
@@ -205,6 +217,7 @@
             <div class="col-lg-4 col-md-6 pb-1">
                 <div class="cat-item d-flex flex-column border mb-4" style="padding: 30px;">
                     <a href="" class="cat-img position-relative overflow-hidden mb-3">
+                    <a href="" class="cat-img position-relative overflow-hidden mb-3">
                         <img class="img-fluid" src="img/cat-1.jpg" alt="">
                     </a>
                     <h5 class="font-weight-semi-bold m-0">Men's dresses</h5>
@@ -267,8 +280,7 @@
             include "connect.php";
             $recordsPerPage = 8;
 
-            $conn = new PDO("mysql:host=$server;dbname=$database", $username, $password);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
 
             $totalCountQuery = "SELECT COUNT(*) as total FROM products";
             $totalCountStmt = $conn->prepare($totalCountQuery);
@@ -286,24 +298,28 @@
             if ($stmt->rowCount() > 0) {
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     ?>
-                    <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
-                        <div class="card product-item border-0 mb-4">
-                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                                <img class="img-fluid w-100" style="height: 280px;" src="./img/<?php echo $row['img']; ?>" alt="<?php echo $row['name']; ?>">
-                            </div>
-                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                                <h6 class="text-truncate mb-3"><?php echo $row['name']; ?></h6>
-                                <div class="d-flex justify-content-center">
-                                    <h6><?php echo $row['price']; ?> VND</h6>
-                                    <h6 class="text-muted ml-2">Quantity: <?php echo $row['stock_quantity']; ?></h6>
+                        <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
+                                <div class="card product-item border-0 mb-4">
+                                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                                        <img class="img-fluid w-100" style="height: 280px;" src="./img/<?php echo $row['img']; ?>" alt="<?php echo $row['name']; ?>">
+                                    </div>
+                                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                                        <h6 class="text-truncate mb-3"><?php echo $row['name']; ?></h6>
+                                        <div class="d-flex justify-content-center">
+                                            <h6><?php echo $row['price']; ?> VND</h6>
+                                            <h6 class="text-m
+                                            uted ml-2">Quantity: <?php echo $row['stock_quantity']; ?></h6>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer d-flex justify-content-between bg-light border">
+                                        <button class="btn btn-sm text-dark p-0 add-to-cart-btn" data-product-id="<?php echo $row['id']; ?>">
+                                            <i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart
+                                        </button>
+                                        <a href="#" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Check Out</a>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="view_product.php?id=<?php echo $row['id']; ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
-                                <a href="checkout.php?id=<?php echo $row['id']; ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Check Out</a>
-                            </div>
                         </div>
-                    </div>
+
                     <?php
                 }
                 $totalPages = ceil($totalCount / $recordsPerPage);
@@ -325,7 +341,7 @@
 
 
     <!-- Products End -->
-    
+
 
 
     <!-- Products End -->
@@ -420,28 +436,41 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row border-top border-light mx-xl-5 py-4">
-            <div class="col-md-6 px-xl-0">
-                <p class="mb-md-0 text-center text-md-left text-dark">
-                    &copy; <a class="text-dark font-weight-semi-bold" href="#">Your Site Name</a>. All Rights Reserved. Designed
-                    by
-                    <a class="text-dark font-weight-semi-bold" href="https://htmlcodex.com">HTML Codex</a><br>
-                    Distributed By <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
-                </p>
-            </div>
-            <div class="col-md-6 px-xl-0 text-center text-md-right">
-                <img class="img-fluid" src="img/payments.png" alt="">
-            </div>
-        </div>
-    </div>
-    <!-- Footer End -->
-
+        </div>    <!-- Footer End -->
 
     <!-- Back to Top -->
     <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
 
+    <!--    notify start-->
+    <div id="notification" class="notification position-fixed rounded bg-white" style="display: none; top: 20px; right: 20px; padding: 10px; max-width: 500px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);">
+        <div class="position-relative notification-container p-3" style="border: 1px solid #ccc;">
+        <span class="notification--close position-absolute cursor-pointer" style="top: 5px; right: 5px;">
+            <i class="fas fa-times"></i>
+        </span>
+            <span class="text-nowrap notification__title" style="font-weight: bold;">
+            <i class="fas fa-check-circle text-success mr-1"></i> Thêm vào giỏ hàng thành công!
+        </span>
+            <a href="./cart.php" class="btn btn-danger btn-block btn-sm mt-3" style="border-radius: 5px;">Xem giỏ hàng và thanh toán</a>
 
+            <!--            <button class="btn btn-danger btn-block btn-sm mt-3" tabindex="0" style="border-radius: 5px;">Xem giỏ hàng và thanh toán</button>-->
+        </div>
+    </div>
+    <div id="success-notification" class="notification position-fixed rounded bg-white" style="display: none; top: 20px; right: 20px; padding: 10px; max-width: 500px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);">
+        <div class="position-relative notification-container p-3" style="border: 1px solid #ccc;">
+        <span class="notification--close position-absolute cursor-pointer" style="top: 5px; right: 5px;">
+            <i class="fas fa-times"></i>
+        </span>
+            <span class="text-nowrap notification__title" style="font-weight: bold;">
+            <i class="fas fa-check-circle text-success mr-1"></i> Sản phẩm đã được thêm vào giỏ hàng!
+        </span>
+            <a href="./cart.php" class="btn btn-danger btn-block btn-sm mt-3" style="border-radius: 5px;">Xem giỏ hàng và thanh toán</a>
+        </div>
+    </div>
+
+
+
+
+    <!--    notify end-->
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
@@ -451,9 +480,9 @@
     <!-- Contact Javascript File -->
     <script src="mail/jqBootstrapValidation.min.js"></script>
     <script src="mail/contact.js"></script>
+    <script src="./js/add_cart.js"></script>
 
     <!-- Template Javascript -->
-    <script src="js/main.js"></script>
 </body>
 
 </html>

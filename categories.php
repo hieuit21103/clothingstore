@@ -70,7 +70,7 @@
             }
         }
 
-        $query = "SELECT * FROM products where category_id = :id LIMIT :offset, :recordsPerPage";
+        $query = "SELECT * FROM products where category = :id LIMIT :offset, :recordsPerPage";
         $stmt = $conn->prepare($query);
         $stmt->bindParam(':id', $category_id);
         $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);

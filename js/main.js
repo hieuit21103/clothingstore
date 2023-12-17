@@ -1,6 +1,6 @@
 (function ($) {
     "use strict";
-    
+
     // Dropdown on mouse hover
     $(document).ready(function () {
         function toggleNavbarMethod() {
@@ -14,11 +14,12 @@
                 $('.navbar .dropdown').off('mouseover').off('mouseout');
             }
         }
+
         toggleNavbarMethod();
         $(window).resize(toggleNavbarMethod);
     });
-    
-    
+
+
     // Back to top button
     $(window).scroll(function () {
         if ($(this).scrollTop() > 100) {
@@ -41,20 +42,20 @@
         autoplay: true,
         smartSpeed: 1000,
         responsive: {
-            0:{
-                items:2
+            0: {
+                items: 2
             },
-            576:{
-                items:3
+            576: {
+                items: 3
             },
-            768:{
-                items:4
+            768: {
+                items: 4
             },
-            992:{
-                items:5
+            992: {
+                items: 5
             },
-            1200:{
-                items:6
+            1200: {
+                items: 6
             }
         }
     });
@@ -68,17 +69,17 @@
         autoplay: true,
         smartSpeed: 1000,
         responsive: {
-            0:{
-                items:1
+            0: {
+                items: 1
             },
-            576:{
-                items:2
+            576: {
+                items: 2
             },
-            768:{
-                items:3
+            768: {
+                items: 3
             },
-            992:{
-                items:4
+            992: {
+                items: 4
             }
         }
     });
@@ -88,17 +89,46 @@
     $('.quantity button').on('click', function () {
         var button = $(this);
         var oldValue = button.parent().parent().find('input').val();
+
+        // Get the data-id attribute value from the clicked button
+        let id = button.data('id')
+
         if (button.hasClass('btn-plus')) {
             var newVal = parseFloat(oldValue) + 1;
+            // window.location.href = 'update_cart.php?id='+id+'&op=0'
+            $.ajax({
+                url: "./update_cart.php",
+                type: 'post',
+                data: { productId: id, op: 0 },
+                dataType: 'html',
+                success: function () {
+                    window.location.reload();
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
         } else {
-            if (oldValue > 0) {
+            if (oldValue > 1) {
                 var newVal = parseFloat(oldValue) - 1;
+                $.ajax({
+                    url: "./update_cart.php",
+                    type: 'post',
+                    data: { productId: id, op: 1 },
+                    dataType: 'html',
+                    success: function () {
+                        window.location.reload();
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                })
             } else {
-                newVal = 0;
+                newVal = 1;
             }
         }
         button.parent().parent().find('input').val(newVal);
     });
-    
 })(jQuery);
+
 
